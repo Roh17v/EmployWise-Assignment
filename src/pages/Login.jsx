@@ -5,6 +5,7 @@ import axios from "axios";
 import { LOGIN_ROUTE } from "../constants";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
+import js from "@eslint/js";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -32,6 +33,7 @@ const Login = () => {
       if (response.status === 200) {
         setMessage("Login successfully! Redirecting to Home page...");
         setToken(response.data.token);
+        localStorage.setItem("token", JSON.stringify(response.data.token));
         setTimeout(() => {
           navigate("/");
         }, 2000);

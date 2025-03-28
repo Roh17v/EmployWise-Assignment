@@ -14,7 +14,10 @@ const Navbar = () => {
           {token ? (
             <button
               className="rounded-md p-2 bg-white text-black cursor-pointer"
-              onClick={() => setToken(null)}
+              onClick={() => {
+                setToken(null);
+                localStorage.removeItem("token");
+              }}
             >
               Logout
             </button>

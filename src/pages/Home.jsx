@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 
 const Home = () => {
+  const [userList, setUserList] = useState([]);
+
   return (
     <>
       <Navbar />
