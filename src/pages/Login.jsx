@@ -5,7 +5,6 @@ import axios from "axios";
 import { LOGIN_ROUTE } from "../constants";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
-import js from "@eslint/js";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -93,7 +92,7 @@ const Login = () => {
             type="submit"
             className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md px-4 py-2 flex items-center justify-center gap-2 transition duration-300"
             onClick={login}
-            disabled={loading} // Disable button while loading
+            disabled={loading}
           >
             {loading ? (
               <span className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></span>

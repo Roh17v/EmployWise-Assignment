@@ -63,6 +63,8 @@ const Home = () => {
   };
 
   const handleSaveChanges = async () => {
+    setLoading(true);
+
     try {
       const response = await axios.put(
         `${USER_ROUTE}/${selectedUser.id}`,
@@ -82,6 +84,8 @@ const Home = () => {
       console.log(response);
     } catch (error) {
       alert("Unable to Save Changes. Try Again!");
+    } finally {
+      setLoading(false);
     }
     setIsModalOpen(false);
   };
@@ -108,7 +112,7 @@ const Home = () => {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {loading
+          {!users && loading
             ? Array(6)
                 .fill()
                 .map((_, index) => (
@@ -216,9 +220,18 @@ const Home = () => {
                 </button>
                 <button
                   onClick={handleSaveChanges}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition"
+                  disabled={loading}
+                  className={`px-4 py-2 rounded transition flex items-center justify-center ${
+                    loading
+                      ? "bg-green-400 cursor-not-allowed"
+                      : "bg-green-600 hover:bg-green-700 text-white"
+                  }`}
                 >
-                  Save Changes
+                  {loading ? (
+                    <span className="animate-spin inline-block h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
+                  ) : (
+                    "Save Changes"
+                  )}
                 </button>
               </div>
             </div>
