@@ -1,11 +1,22 @@
-import { createContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const userContext = createContext();
 
-export const userProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+export const UserProvider = ({ children }) => {
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(JSON.parse(storedToken));
+    }
+  }, []);
 
   return (
-    <userContext.Provider value={{ user }}>{children}</userContext.Provider>
+    <userContext.Provider value={{ token }}>{children}</userContext.Provider>
   );
+};
+
+export const useUserContext = () => {
+  return useContext(userContext);
 };
