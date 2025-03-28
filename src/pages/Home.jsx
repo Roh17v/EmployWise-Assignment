@@ -10,10 +10,13 @@ const Home = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(null);
+  const [loading, setLoading] = useState(false);
   const dropDownRef = useRef();
 
   useEffect(() => {
     const fetchUsers = async () => {
+      setLoading(true);
+
       try {
         const response = await axios.get(`${USER_ROUTE}?page=${page}`);
         if (response.status === 200) {
@@ -22,6 +25,8 @@ const Home = () => {
         }
       } catch (error) {
         console.log("Error fetching users:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -34,7 +39,7 @@ const Home = () => {
         setDropdownOpen(null);
       }
     };
-    document.addEventListener("", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -103,52 +108,68 @@ const Home = () => {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {users.map((user) => (
-            <div
-              key={user.id}
-              className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center relative"
-            >
-              <div className="absolute right-3">
-                <button
-                  onClick={() =>
-                    setDropdownOpen(dropdownOpen === user.id ? null : user.id)
-                  }
-                  className="text-gray-700 text-xl font-bold"
-                >
-                  ⋮
-                </button>
-                {dropdownOpen === user.id && (
+          {loading
+            ? Array(6)
+                .fill()
+                .map((_, index) => (
                   <div
-                    ref={dropDownRef}
-                    className="absolute left-0 mt-2 w-32 bg-white shadow-lg rounded-lg z-999"
+                    key={index}
+                    className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center animate-pulse"
                   >
-                    <button
-                      className="block w-full px-4 py-2 text-left hover:bg-gray-100"
-                      onClick={() => handleEditClick(user)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="block w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100"
-                      onClick={() => handleDelete(user.id)}
-                    >
-                      Delete
-                    </button>
+                    <div className="w-24 h-24 rounded-full bg-gray-300"></div>
+                    <div className="h-4 w-32 bg-gray-300 rounded mt-3"></div>
+                    <div className="h-3 w-24 bg-gray-300 rounded mt-2"></div>
+                    <div className="h-8 w-24 bg-gray-300 rounded mt-3"></div>
                   </div>
-                )}
-              </div>
+                ))
+            : users.map((user) => (
+                <div
+                  key={user.id}
+                  className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center relative"
+                >
+                  <div className="absolute right-3">
+                    <button
+                      onClick={() =>
+                        setDropdownOpen(
+                          dropdownOpen === user.id ? null : user.id
+                        )
+                      }
+                      className="text-gray-700 text-xl font-bold"
+                    >
+                      ⋮
+                    </button>
+                    {dropdownOpen === user.id && (
+                      <div
+                        ref={dropDownRef}
+                        className="absolute right-2 mt-2 w-32 bg-white shadow-lg rounded-lg z-999"
+                      >
+                        <button
+                          className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                          onClick={() => handleEditClick(user)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="block w-full px-4 py-2 text-left text-red-600 hover:bg-gray-100"
+                          onClick={() => handleDelete(user.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
 
-              <img
-                src={user.avatar}
-                alt={user.first_name}
-                className="w-24 h-24 rounded-full shadow-md"
-              />
-              <h3 className="text-xl font-semibold text-gray-900 mt-3">
-                {user.first_name} {user.last_name}
-              </h3>
-              <p className="text-gray-600">{user.email}</p>
-            </div>
-          ))}
+                  <img
+                    src={user.avatar}
+                    alt={user.first_name}
+                    className="w-24 h-24 rounded-full shadow-md"
+                  />
+                  <h3 className="text-xl font-semibold text-gray-900 mt-3">
+                    {user.first_name} {user.last_name}
+                  </h3>
+                  <p className="text-gray-600">{user.email}</p>
+                </div>
+              ))}
         </div>
 
         {isModalOpen && selectedUser && (
