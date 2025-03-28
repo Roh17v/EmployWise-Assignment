@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { USER_ROUTE } from "../constants";
@@ -10,6 +10,7 @@ const Home = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(null);
+  const dropDownRef = useRef();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -26,6 +27,19 @@ const Home = () => {
 
     fetchUsers();
   }, [page]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropDownRef.current && !dropDownRef.current.contains(event.target)) {
+        setDropdownOpen(null);
+      }
+    };
+    document.addEventListener("", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleEditClick = (user) => {
     setSelectedUser(user);
@@ -104,7 +118,10 @@ const Home = () => {
                   ⋮
                 </button>
                 {dropdownOpen === user.id && (
-                  <div className="absolute left-0 mt-2 w-32 bg-white shadow-lg rounded-lg z-999">
+                  <div
+                    ref={dropDownRef}
+                    className="absolute left-0 mt-2 w-32 bg-white shadow-lg rounded-lg z-999"
+                  >
                     <button
                       className="block w-full px-4 py-2 text-left hover:bg-gray-100"
                       onClick={() => handleEditClick(user)}
