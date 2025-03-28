@@ -6,7 +6,7 @@ import { USER_ROUTE } from "../constants";
 const Home = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(null);
@@ -17,7 +17,7 @@ const Home = () => {
         const response = await axios.get(`${USER_ROUTE}?page=${page}`);
         if (response.status === 200) {
           setUsers(response.data.data);
-          setTotalPage(response.data?.total_pages);
+          setTotalPages(response.data?.total_pages);
         }
       } catch (error) {
         console.log("Error fetching users:", error);
@@ -25,12 +25,22 @@ const Home = () => {
     };
 
     fetchUsers();
-  }, []);
+  }, [page]);
 
   const handleEditClick = (user) => {
     setSelectedUser(user);
     setIsModalOpen(true);
     setDropdownOpen(null);
+  };
+
+  const handlePrevPage = () => {
+    setDropdownOpen(null);
+    if (page > 1) setPage(page - 1);
+  };
+
+  const handleNextPage = () => {
+    setDropdownOpen(null);
+    if (page < totalPages) setPage(page + 1);
   };
 
   const handleSaveChanges = async () => {
@@ -48,6 +58,7 @@ const Home = () => {
             )
           );
         }
+        alert("User Info updated sucessfully!");
       }
       console.log(response);
     } catch (error) {
@@ -61,8 +72,12 @@ const Home = () => {
   };
 
   const handleDelete = (id) => {
-    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
-    setDropdownOpen(null);
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+    if (confirmDelete) {
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+    }
   };
 
   return (
@@ -171,6 +186,33 @@ const Home = () => {
             </div>
           </div>
         )}
+        <div className="flex justify-center items-center mt-8 gap-4">
+          <button
+            onClick={handlePrevPage}
+            disabled={page === 1}
+            className={`px-4 py-2 rounded-md ${
+              page === 1
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
+          >
+            Previous
+          </button>
+          <span className="text-lg font-semibold text-gray-700">
+            Page {page} of {totalPages}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={page === totalPages}
+            className={`px-4 py-2 rounded-md ${
+              page === totalPages
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
+          >
+            Next
+          </button>
+        </div>
       </div>
     </>
   );
