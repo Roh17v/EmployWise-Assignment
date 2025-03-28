@@ -13,6 +13,7 @@ This is a **React-based user profile management application** that allows users 
 - Use a dropdown menu for actions (Edit/Delete) with outside click detection
 
 ---
+[Live Link](https://employwise-rohit-assignment.netlify.app/)
 
 ## 🚀 Getting Started
 
